@@ -164,7 +164,7 @@ class NoiseArgParser(argparse.Action):
             elif command.startswith('sharpness'):
                 layers.append(parse_sharpness(command))
             elif command.startswith('jpeg'):
-                layers.append(JpegCompression())
+                layers.append(JpegCompression(device=getattr(namespace, 'device', 'cuda' if torch.cuda.is_available() else 'cpu')))
             elif command.startswith('quant'):
                 layers.append(Quantization())
             elif command.startswith('identity'):

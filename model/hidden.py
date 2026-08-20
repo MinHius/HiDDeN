@@ -21,21 +21,21 @@ class Hidden:
 
         self.encoder_decoder = EncoderDecoder(configuration, noiser).to(device)
         self.discriminator = Discriminator(configuration).to(device)
-        self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters(), lr = 5e-4)
-        self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters(), lr = 5e-4)
+        self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters(), lr = 1e-6)
+        self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters(), lr = 1e-6)
         self.scheduler_enc_dec = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer_enc_dec,
             mode='min',
             factor=0.5,
             patience=5,
-            min_lr=1e-6
+            min_lr=1e-8
         )
         self.scheduler_discrim = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer_discrim,
             mode='min',
             factor=0.5,
             patience=10,
-            min_lr=1e-6
+            min_lr=1e-8
         )
         if configuration.use_vgg:
             self.vgg_loss = VGGLoss(3, 1, False)

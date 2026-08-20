@@ -12,7 +12,7 @@
 """
 # python main.py new --name test_6 --data-dir ./image_30k --batch-size 30 --noise "crop+cropout+dropout+resize+color_jitter+color_grading+sharpness+identity"
 
-# python train.py --noise "crop+cropout+dropout+resize+color_jitter+color_grading+sharpness+identity"
+# python main.py new --name test_8 --data-dir ./image_30k --batch-size 30 --noise "crop+cropout+dropout" --continue-from-folder "HiDDeN/runs/test_6 2026.08.17--10-36-24"
 
 # +jpeg()
 
@@ -21,6 +21,9 @@
 
 
 # python test_model.py \
-#   -o "runs/test_128 2026.08.13--03-45-51/options-and-config.pickle" \
-#   -c "runs/test_128 2026.08.13--03-45-51/checkpoints/test_128--epoch-100.pyt" \
+#   -o "runs/test_6 2026.08.17--10-36-24/options-and-config.pickle" \
+#   -c "runs/test_6 2026.08.17--10-36-24/checkpoints/test_6--epoch-300.pyt" \
 #   -s "./data/test/test_class/03.jpg"
+
+
+# "Combined([Crop(0.8, 1.0), Cropout(0.05, 0.1), Dropout(0.1), Identity()])"

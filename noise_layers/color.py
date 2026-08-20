@@ -18,7 +18,7 @@ class ColorJitter(nn.Module):
     def forward(self, noised_and_cover):
         # In HiDDeN, noise layers usually take a tuple (noised_image, cover_image)
         # or just noised_image. Adjust unpacking to match your pipeline.
-        if isinstance(noised_and_cover, tuple):
+        if isinstance(noised_and_cover, (tuple, list)):
             x, cover = noised_and_cover
         else:
             x, cover = noised_and_cover, None
@@ -58,7 +58,7 @@ class ColorGrading(nn.Module):
         self.temp_range = temp_range
 
     def forward(self, noised_and_cover):
-        if isinstance(noised_and_cover, tuple):
+        if isinstance(noised_and_cover, (tuple, list)):
             x, cover = noised_and_cover
         else:
             x, cover = noised_and_cover, None
@@ -95,7 +95,7 @@ class SharpnessEnhance(nn.Module):
         self.register_buffer('laplacian_kernel', kernel.repeat(3, 1, 1, 1))
 
     def forward(self, noised_and_cover):
-        if isinstance(noised_and_cover, tuple):
+        if isinstance(noised_and_cover, (tuple, list)):
             x, cover = noised_and_cover
         else:
             x, cover = noised_and_cover, None
@@ -103,10 +103,11 @@ class SharpnessEnhance(nn.Module):
         B, C, H, W = x.shape
         device = x.device
 
-        # Compute high-frequency gradient map
-        edges = F.conv2d(x, self.laplacian_kernel, padding=1, groups=3)
+        # Ensure kernel matches tensor device even if parent module missed .to(device)
+        kernel = self.laplacian_kernel.to(device=device, dtype=x.dtype)
+
+        edges = F.conv2d(x, kernel, padding=1, groups=3)
         factor = torch.empty(B, 1, 1, 1, device=device).uniform_(*self.factor_range)
 
-        # Unsharp masking: I + factor * edges
         x = torch.clamp(x + (factor - 1.0) * edges * 0.25, 0.0, 1.0)
         return (x, cover) if cover is not None else x
